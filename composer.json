@@ -1,5 +1,5 @@
 {
-	"name": "plibv4/composer",
+	"name": "plibv4/profiler",
 	"minimum-stability": "dev",
 	"repositories": [
 		{
