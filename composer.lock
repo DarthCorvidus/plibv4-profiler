@@ -1,0 +1,94 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "1cef931809d01f1c12c0f29920485011",
+    "packages": [
+        {
+            "name": "plibv4/longeststring",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarthCorvidus/plibv4-longeststring",
+                "reference": "047ff7ba5e9698d5a06f45e8c11d70251d9cfe25"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-longeststring/zipball/047ff7ba5e9698d5a06f45e8c11d70251d9cfe25",
+                "reference": "047ff7ba5e9698d5a06f45e8c11d70251d9cfe25",
+                "shasum": ""
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "time": "2021-12-21T20:47:40+00:00"
+        },
+        {
+            "name": "plibv4/terminaltable",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarthCorvidus/plibv4-terminaltable",
+                "reference": "a57c1bd0fda2b6b8aefc826124fef0cfdf8105bb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-terminaltable/zipball/a57c1bd0fda2b6b8aefc826124fef0cfdf8105bb",
+                "reference": "a57c1bd0fda2b6b8aefc826124fef0cfdf8105bb",
+                "shasum": ""
+            },
+            "require": {
+                "plibv4/longeststring": "dev-main",
+                "plibv4/vtc": "dev-main"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "time": "2023-06-24T13:01:31+00:00"
+        },
+        {
+            "name": "plibv4/vtc",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarthCorvidus/plibv4-vtc",
+                "reference": "0063df16b906ff8da77154042f4af5d70ae878f7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-vtc/zipball/0063df16b906ff8da77154042f4af5d70ae878f7",
+                "reference": "0063df16b906ff8da77154042f4af5d70ae878f7",
+                "shasum": ""
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "time": "2021-12-21T20:53:29+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "plibv4/terminaltable": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.1.0"
+}
