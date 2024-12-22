@@ -20,3 +20,8 @@ sleep(5);
 Profiler::endTimer("longsleep");
 Profiler::EndTimer("sleep");
 Profiler::printTimers();
+
+echo PHP_EOL."Clearing profiler:".PHP_EOL.PHP_EOL;
+
+Profiler::clear();
+Profiler::printTimers();

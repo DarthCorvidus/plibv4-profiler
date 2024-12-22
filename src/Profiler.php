@@ -20,13 +20,29 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 	private array $called = array();
 	private function __construct() {
 		$this->all = hrtime(true);
+		$this->called = array();
+		$this->timers = array();
 		$this->title = array("Key", "Time", "Pct", "Called");
+	}
+	
+	public static function init(): void {
+		/**
+		 * This check is marked by Psalm, but having it is a necessary 'evil',
+		 * as Profiler is a Singleton.
+		 * @psalm-suppress RedundantPropertyInitializationCheck
+		 */
+		if(isset(self::$obj)) {
+			throw new \RuntimeException("called Profiler::init more than once");
+		}
+		self::$obj = new Profiler();
+	}
+
+	public static function clear(): void {
+		self::$obj = new Profiler();
 	}
 	
 	public static function startTimer(string $id): void {
 		/**
-		 * This check is marked by Psalm, but having it is a necessary 'evil',
-		 * as Profiler is a Singleton.
 		 * @psalm-suppress RedundantPropertyInitializationCheck
 		 */
 		if(!isset(self::$obj)) {
