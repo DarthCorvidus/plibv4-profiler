@@ -11,14 +11,18 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 	const PERCENT = 2;
 	const CALLED = 3;
 	const MAX = 4;
+	/** @var array<int, array<int, string>> */
 	private array $values = array();
+	/** @var list<string> */
 	private array $title = array();
 	private static ?Profiler $obj = null;
+	/** @var array<string, int> */
 	private array $timers = array();
+	/** @var array<string, int> */
 	private array $temp = array();
 	private int $start;
+	/** @var array<string, int> */
 	private array $called = array();
-	private array $opened = array();
 	private function __construct() {
 		$this->start = hrtime(true);
 		$this->called = array();
@@ -141,22 +145,28 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 		$total = hrtime(true)-$instance->start;
 		
 		foreach($instance->timers as $key => $value) {
+			/**
+			 * @var list<string>
+			 */
 			$entry = array_fill(0, self::MAX, "");
 			$entry[self::ENTRY] = $key;
 			$entry[self::AMOUNT] = round($value/1000000000, 2);
 			$entry[self::PERCENT] = round(($value/$total)*100, 2)."%";
 			$entry[self::CALLED] = $instance->called[$key];
+			/**
+			 * @psalm-suppress InvalidPropertyAssignmentValue
+			 */
 			$this->values[] = $entry;
 			#echo $key." ".round($value/1000000000, 2)." (".round(($value/$total)*100, 2)."%)".PHP_EOL;
-		}
-		foreach($instance->called as $key => $value) {
-			#echo $key." ".$value.PHP_EOL;
 		}
 
 		$entry = array_fill(0, self::MAX, "");
 		$entry[self::ENTRY] = "Total";
 		$entry[self::AMOUNT] = round($total/1000000000, 2);
 		$entry[self::CALLED] = array_sum($instance->called);
+		/**
+		 * @psalm-suppress InvalidPropertyAssignmentValue
+		 */
 		$this->values[] = $entry;
 		#echo "Total: ".round($total/1000000000,2).PHP_EOL;
 	}
