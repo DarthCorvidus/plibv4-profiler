@@ -13,7 +13,7 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 	const MAX = 4;
 	private array $values = array();
 	private array $title = array();
-	private static Profiler $obj;
+	private static ?Profiler $obj = null;
 	private array $timers = array();
 	private array $temp = array();
 	private int $all;
@@ -41,33 +41,51 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 		self::$obj = new Profiler();
 	}
 	
-	public static function startTimer(string $id): void {
-		/**
-		 * @psalm-suppress RedundantPropertyInitializationCheck
-		 */
-		if(!isset(self::$obj)) {
+	/**
+	 * Create instance if it does not exist. Allowed on startTimer.
+	 * @return Profiler
+	 */
+	public static function getLazyInstance(): Profiler {
+		if(self::$obj === null) {
 			self::$obj = new Profiler();
 		}
-		if(!isset(self::$obj->timers[$id])) {
-			self::$obj->timers[$id] = 0;
+		return self::$obj;
+	}
+	
+	/**
+	 * Get instance, but it has to exist, throw Exception if it does not.
+	 * @return Profiler
+	 * @throws \RuntimeException
+	 */
+	public static function getExistingInstance(): Profiler {
+		if(self::$obj === null) {
+			throw new \RuntimeException("instance is not initialized");
 		}
-		if(!isset(self::$obj->called[$id])) {
-			self::$obj->called[$id] = 0;
+		return self::$obj;
+	}
+	
+	public static function startTimer(string $id): void {
+		$instance = self::getLazyInstance();
+		if(!isset($instance->timers[$id])) {
+			$instance->timers[$id] = 0;
 		}
-		self::$obj->called[$id]++;
-		self::$obj->temp[$id] = hrtime(true);
+		if(!isset($instance->called[$id])) {
+			$instance->called[$id] = 0;
+		}
+		$instance->called[$id]++;
+		$instance->temp[$id] = hrtime(true);
 	}
 	
 	public static function endTimer(string $id): void {
-		$spent = hrtime(true)-self::$obj->temp[$id];
-		self::$obj->timers[$id] += $spent;
+		$instance = self::getExistingInstance();
+		$spent = hrtime(true)-$instance->temp[$id];
+		$instance->timers[$id] += $spent;
 	}
 	
 	public static function printTimers(): void {
 		$timer = new Profiler();
 		$table = new \TerminalTable($timer);
 		$table->printTable();
-		$total = hrtime(true)-self::$obj->all;
 	}
 
 	public function getCell($col, $row): string {
@@ -107,26 +125,27 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 	}
 
 	public function load(): void {
+		$instance = self::getExistingInstance();
 		$this->values = array();
-		$total = hrtime(true)-self::$obj->all;
+		$total = hrtime(true)-$instance->all;
 		
-		foreach(self::$obj->timers as $key => $value) {
+		foreach($instance->timers as $key => $value) {
 			$entry = array_fill(0, self::MAX, "");
 			$entry[self::ENTRY] = $key;
 			$entry[self::AMOUNT] = round($value/1000000000, 2);
 			$entry[self::PERCENT] = round(($value/$total)*100, 2)."%";
-			$entry[self::CALLED] = self::$obj->called[$key];
+			$entry[self::CALLED] = $instance->called[$key];
 			$this->values[] = $entry;
 			#echo $key." ".round($value/1000000000, 2)." (".round(($value/$total)*100, 2)."%)".PHP_EOL;
 		}
-		foreach(self::$obj->called as $key => $value) {
+		foreach($instance->called as $key => $value) {
 			#echo $key." ".$value.PHP_EOL;
 		}
 
 		$entry = array_fill(0, self::MAX, "");
 		$entry[self::ENTRY] = "Total";
 		$entry[self::AMOUNT] = round($total/1000000000, 2);
-		$entry[self::CALLED] = array_sum(self::$obj->called);
+		$entry[self::CALLED] = array_sum($instance->called);
 		$this->values[] = $entry;
 		#echo "Total: ".round($total/1000000000,2).PHP_EOL;
 		
