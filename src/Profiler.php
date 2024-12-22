@@ -16,10 +16,10 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 	private static ?Profiler $obj = null;
 	private array $timers = array();
 	private array $temp = array();
-	private int $all;
+	private int $start;
 	private array $called = array();
 	private function __construct() {
-		$this->all = hrtime(true);
+		$this->start = hrtime(true);
 		$this->called = array();
 		$this->timers = array();
 		$this->title = array("Key", "Time", "Pct", "Called");
@@ -130,7 +130,7 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 	public function load(): void {
 		$instance = self::getExistingInstance();
 		$this->values = array();
-		$total = hrtime(true)-$instance->all;
+		$total = hrtime(true)-$instance->start;
 		
 		foreach($instance->timers as $key => $value) {
 			$entry = array_fill(0, self::MAX, "");
@@ -151,7 +151,16 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 		$entry[self::CALLED] = array_sum($instance->called);
 		$this->values[] = $entry;
 		#echo "Total: ".round($total/1000000000,2).PHP_EOL;
-		
+	}
+	
+	public static function getInitTime(): int {
+		$instance = self::getExistingInstance();
+	return $instance->start;
+	}
+	
+	public static function getTimers(): array {
+		$instance = self::getExistingInstance();
+	return $instance->timers;
 	}
 
 }
