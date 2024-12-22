@@ -18,6 +18,7 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 	private array $temp = array();
 	private int $start;
 	private array $called = array();
+	private array $opened = array();
 	private function __construct() {
 		$this->start = hrtime(true);
 		$this->called = array();
@@ -69,6 +70,17 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 	
 	public static function startTimer(string $id): void {
 		$instance = self::getLazyInstance();
+		if(isset($instance->temp[$id])) {
+			throw new \RuntimeException("startTimer was called before on id '".$id."' without calling endTimer");
+		}
+		$instance->temp[$id] = hrtime(true);
+	}
+	
+	public static function endTimer(string $id): void {
+		$instance = self::getExistingInstance();
+		if(!isset($instance->temp[$id])) {
+			throw new \RuntimeException("endTimer was called before startTimer on '".$id."'");
+		}
 		if(!isset($instance->timers[$id])) {
 			$instance->timers[$id] = 0;
 		}
@@ -76,13 +88,9 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 			$instance->called[$id] = 0;
 		}
 		$instance->called[$id]++;
-		$instance->temp[$id] = hrtime(true);
-	}
-	
-	public static function endTimer(string $id): void {
-		$instance = self::getExistingInstance();
 		$spent = hrtime(true)-$instance->temp[$id];
 		$instance->timers[$id] += $spent;
+		unset($instance->temp[$id]);
 	}
 	
 	public static function printTimers(): void {
@@ -161,6 +169,11 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 	public static function getTimers(): array {
 		$instance = self::getExistingInstance();
 	return $instance->timers;
+	}
+	
+	public static function getCalled(): array {
+		$instance = self::getExistingInstance();
+	return $instance->called;
 	}
 
 }

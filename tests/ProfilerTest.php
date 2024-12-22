@@ -9,7 +9,7 @@ class ProfilerTest extends TestCase {
 
 	function testInit(): void {
 		Profiler::init();
-		$this->assertSame(true, is_int(Profiler::getInitTime()));
+		$this->assertGreaterThan(0, Profiler::getInitTime());
 	}
 	
 	function testInitDouble(): void {
@@ -18,9 +18,49 @@ class ProfilerTest extends TestCase {
 		Profiler::init();
 	}
 	
-	function testAddTimer(): void {
+	function testStartTimerOnly(): void {
 		Profiler::startTimer("test");
+		$this->assertArrayNotHasKey("test", Profiler::getTimers());
+	}
+
+	function testStartTimerTwice(): void {
+		Profiler::startTimer("test");
+		$this->expectException(\RuntimeException::class);
+		Profiler::startTimer("test");
+	}
+
+	function testStartEndTimer(): void {
+		Profiler::startTimer("test");
+		Profiler::endTimer("test");
 		$this->assertArrayHasKey("test", Profiler::getTimers());
 		$this->assertArrayNotHasKey("testx", Profiler::getTimers());
+		$this->assertArrayHasKey("test", Profiler::getCalled());
 	}
+
+	function testStartEndTimerTwice(): void {
+		Profiler::startTimer("test");
+		Profiler::endTimer("test");
+		Profiler::startTimer("test");
+		Profiler::endTimer("test");
+		$this->assertArrayHasKey("test", Profiler::getTimers());
+		$this->assertArrayNotHasKey("testx", Profiler::getTimers());
+		$this->assertArrayHasKey("test", Profiler::getCalled());
+	}
+
+	function testStartEndTimerOpenTwice(): void {
+		Profiler::startTimer("test");
+		Profiler::endTimer("test");
+		Profiler::startTimer("test");
+		// make sure that an open/close call is cleared.
+		$this->expectException(\RuntimeException::class);
+		Profiler::startTimer("test");
+	}
+
+	function testEndBeforeStart(): void {
+		Profiler::init();
+		$this->expectException(\RuntimeException::class);
+		Profiler::endTimer("test");
+	}
+
+	
 }
