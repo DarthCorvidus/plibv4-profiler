@@ -41,6 +41,9 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 		self::$obj = new Profiler();
 	}
 	
+	public static function destroy(): void {
+		self::$obj = null;
+	}
 	/**
 	 * Create instance if it does not exist. Allowed on startTimer.
 	 * @return Profiler
