@@ -11,19 +11,24 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 	const PERCENT = 2;
 	const CALLED = 3;
 	const MAX = 4;
-	private $values;
-	private $title = array();
-	private static $obj;
-	private $timers = array();
-	private $temp = array();
-	private $all;
-	private $called;
+	private array $values = array();
+	private array $title = array();
+	private static Profiler $obj;
+	private array $timers = array();
+	private array $temp = array();
+	private int $all;
+	private array $called = array();
 	private function __construct() {
 		$this->all = hrtime(true);
 		$this->title = array("Key", "Time", "Pct", "Called");
 	}
 	
-	public static function startTimer(string $id) {
+	public static function startTimer(string $id): void {
+		/**
+		 * This check is marked by Psalm, but having it is a necessary 'evil',
+		 * as Profiler is a Singleton.
+		 * @psalm-suppress RedundantPropertyInitializationCheck
+		 */
 		if(!isset(self::$obj)) {
 			self::$obj = new Profiler();
 		}
@@ -37,12 +42,12 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 		self::$obj->temp[$id] = hrtime(true);
 	}
 	
-	public static function endTimer(string $id) {
+	public static function endTimer(string $id): void {
 		$spent = hrtime(true)-self::$obj->temp[$id];
 		self::$obj->timers[$id] += $spent;
 	}
 	
-	public static function printTimers() {
+	public static function printTimers(): void {
 		$timer = new Profiler();
 		$table = new \TerminalTable($timer);
 		$table->printTable();
