@@ -21,6 +21,13 @@
 	"require": {
 			"plibv4/terminaltable": "dev-main"
 	},
+	"require-dev": {
+		"vimeo/psalm": "6.x-dev",
+		"phpunit/phpunit": "9.6.x-dev"
+	},
+	"scripts": {
+		"psalm": "./vendor/bin/psalm --show-info=true --no-cache"
+	},
 	"autoload": {
         "classmap": ["src/"]
     }

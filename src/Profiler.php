@@ -85,7 +85,7 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 		return TRUE;
 	}
 
-	public function load() {
+	public function load(): void {
 		$this->values = array();
 		$total = hrtime(true)-self::$obj->all;
 		
