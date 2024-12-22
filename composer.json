@@ -26,7 +26,13 @@
 		"phpunit/phpunit": "9.6.x-dev"
 	},
 	"scripts": {
-		"psalm": "./vendor/bin/psalm --show-info=true --no-cache"
+		"test": "./vendor/bin/phpunit --bootstrap vendor/autoload.php tests",
+		"testdox": "./vendor/bin/phpunit --bootstrap vendor/autoload.php --testdox --colors=always tests",
+		"psalm": "./vendor/bin/psalm --show-info=true --no-cache",
+		"psatest": [
+			"./vendor/bin/psalm --show-info=true --no-cache",
+			"./vendor/bin/phpunit --bootstrap vendor/autoload.php tests/"
+		]
 	},
 	"autoload": {
         "classmap": ["src/"]
