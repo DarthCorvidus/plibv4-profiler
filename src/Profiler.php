@@ -23,6 +23,8 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 	private int $start;
 	/** @var array<string, int> */
 	private array $called = array();
+	/** @var array<string, int> */
+	private array $counters = array();
 	private function __construct() {
 		$this->start = hrtime(true);
 		$this->called = array();
@@ -103,6 +105,14 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 		$table->printTable();
 	}
 
+	public static function incrementCounter(string $id): void {
+		$instance = self::getLazyInstance();
+		if(!isset($instance->counters[$id])) {
+			$instance->counters[$id] = 0;
+		}
+		$instance->counters[$id]++;
+	}
+
 	public function getCell($col, $row): string {
 		return $this->values[$row][$col];
 	}
@@ -139,11 +149,16 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 		return TRUE;
 	}
 
-	public function load(): void {
+	private function loadTimers(): void {
 		$instance = self::getExistingInstance();
-		$this->values = array();
 		$total = hrtime(true)-$instance->start;
-		
+
+		$entry = array_fill(0, self::MAX, "");
+		$entry[self::ENTRY] = "Time:";
+		/**
+		 * @psalm-suppress InvalidPropertyAssignmentValue
+		 */
+		$this->values[] = $entry;
 		foreach($instance->timers as $key => $value) {
 			/**
 			 * @var list<string>
@@ -167,7 +182,46 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 		/**
 		 * @psalm-suppress InvalidPropertyAssignmentValue
 		 */
+		$instance->values[] = $entry;
+	}
+
+	private function loadCounters(): void {
+		$instance = self::getExistingInstance();
+		$total = array_sum($instance->counters);
+
+		$entry = array_fill(0, self::MAX, "");
+		$entry[self::ENTRY] = "Counters:";
+		/**
+		 * @psalm-suppress InvalidPropertyAssignmentValue
+		 */
 		$this->values[] = $entry;
+		foreach($instance->counters as $key => $value) {
+			/**
+			 * @var list<string>
+			 */
+			$entry = array_fill(0, self::MAX, "");
+			$entry[self::ENTRY] = $key;
+			$entry[self::PERCENT] = round(($value/$total)*100, 2)."%";
+			$entry[self::CALLED] = $value;
+
+			/**
+			 * @psalm-suppress InvalidPropertyAssignmentValue
+			 */
+			$this->values[] = $entry;
+		}
+		$entry = array_fill(0, self::MAX, "");
+		$entry[self::ENTRY] = "total:";
+		$entry[self::CALLED] = $total;
+		/**
+		 * @psalm-suppress InvalidPropertyAssignmentValue
+		 */
+		$this->values[] = $entry;
+	}
+
+	public function load(): void {
+		$this->values = array();
+		$this->loadTimers();
+		$this->loadCounters();
 		#echo "Total: ".round($total/1000000000,2).PHP_EOL;
 	}
 	
@@ -186,4 +240,8 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 	return $instance->called;
 	}
 
+	public static function getCounters(): array {
+		$instance = self::getExistingInstance();
+		return $instance->counters;
+	}
 }

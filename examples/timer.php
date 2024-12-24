@@ -2,6 +2,16 @@
 <?php
 namespace plibv4\profiler;
 require __DIR__."/../vendor/autoload.php";
+
+for($i = 0; $i < 100; $i++) {
+	Profiler::startTimer("counter");
+	Profiler::incrementCounter("test1");
+	if($i % 2 === 0) {
+		Profiler::incrementCounter("test2");
+	}
+	Profiler::endTimer("counter");
+}
+
 Profiler::startTimer("sleep");
 Profiler::startTimer("longsleep");
 sleep(5);

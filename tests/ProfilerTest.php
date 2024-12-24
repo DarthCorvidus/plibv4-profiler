@@ -62,5 +62,11 @@ class ProfilerTest extends TestCase {
 		Profiler::endTimer("test");
 	}
 
-	
+	public function testIncrementCounter(): void {
+		Profiler::incrementCounter("test");
+		$this->assertArrayHasKey("test", Profiler::getCounters());
+		$this->assertEquals(1, Profiler::getCounters()["test"]);
+		Profiler::incrementCounter("test");
+		$this->assertEquals(2, Profiler::getCounters()["test"]);
+	}
 }
