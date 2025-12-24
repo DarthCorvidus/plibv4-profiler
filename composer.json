@@ -1,6 +1,7 @@
 {
 	"name": "plibv4/profiler",
 	"minimum-stability": "dev",
+	"prefer-stable": true,
 	"repositories": [
 		{
 			"type": "vcs",
@@ -22,8 +23,8 @@
 			"plibv4/terminaltable": "dev-main"
 	},
 	"require-dev": {
-		"vimeo/psalm": "6.x-dev",
-		"phpunit/phpunit": "9.6.x-dev"
+		"vimeo/psalm": "^6",
+		"phpunit/phpunit": "^9"
 	},
 	"scripts": {
 		"test": "./vendor/bin/phpunit --bootstrap vendor/autoload.php tests",

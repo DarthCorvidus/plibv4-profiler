@@ -3,7 +3,7 @@ namespace plibv4\profiler;
 /**
  * Simple Profiler.
  */
-class Profiler implements \TerminalTableModel, \TerminalTableLayout {
+final class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 	const START_TIMER = 1;
 	const END_TIMER = 2;
 	const ENTRY = 0;
@@ -113,38 +113,47 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 		$instance->counters[$id]++;
 	}
 
+	#[\Override]
 	public function getCell($col, $row): string {
 		return $this->values[$row][$col];
 	}
 
+	#[\Override]
 	public function getCellAttr(int $col, int $row): array {
 		return array();
 	}
 
+	#[\Override]
 	public function getCellBack(int $col, int $row): int {
 		return 0;
 	}
 
+	#[\Override]
 	public function getCellFore(int $col, int $row): int {
 		return 0;
 	}
 
+	#[\Override]
 	public function getCellJustify(int $col, int $row): int {
 		return 0;
 	}
 
+	#[\Override]
 	public function getColumns(): int {
 		return self::MAX;
 	}
 
+	#[\Override]
 	public function getRows(): int {
 		return count($this->values);
 	}
 
+	#[\Override]
 	public function getTitle(int $col): string {
 		return $this->title[$col];
 	}
 
+	#[\Override]
 	public function hasTitle(): bool {
 		return TRUE;
 	}
@@ -166,7 +175,8 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 			$entry = array_fill(0, self::MAX, "");
 			$entry[self::ENTRY] = $key;
 			$entry[self::AMOUNT] = round($value/1000000000, 2);
-			$entry[self::PERCENT] = round(($value/$total)*100, 2)."%";
+			$percent = (string)round(((float)$value/(float)$total)*100.0, 2);
+			$entry[self::PERCENT] = $percent."%";
 			$entry[self::CALLED] = $instance->called[$key];
 			/**
 			 * @psalm-suppress InvalidPropertyAssignmentValue
@@ -201,7 +211,8 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 			 */
 			$entry = array_fill(0, self::MAX, "");
 			$entry[self::ENTRY] = $key;
-			$entry[self::PERCENT] = round(($value/$total)*100, 2)."%";
+			$percent = (string)round(((float)$value/(float)$total)*100.0, 2);
+			$entry[self::PERCENT] = $percent."%";
 			$entry[self::CALLED] = $value;
 
 			/**
@@ -218,6 +229,7 @@ class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 		$this->values[] = $entry;
 	}
 
+	#[\Override]
 	public function load(): void {
 		$this->values = array();
 		$this->loadTimers();

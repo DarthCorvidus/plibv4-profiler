@@ -2,7 +2,8 @@
 declare(strict_types=1);
 namespace plibv4\profiler;
 use PHPUnit\Framework\TestCase;
-class ProfilerTest extends TestCase {
+final class ProfilerTest extends TestCase {
+	#[\Override]
 	function tearDown(): void {
 		Profiler::destroy();
 	}
