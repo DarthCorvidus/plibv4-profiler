@@ -1,9 +1,15 @@
 <?php
 namespace plibv4\profiler;
+use plibv4\terminaltable\TerminalTable;
+use plibv4\terminaltable\TerminalTableModel;
+use plibv4\terminaltable\TerminalTableLayout;
+use plibv4\terminaltable\TerminalTableJustify;
+use plibv4\vtc\VTCAttribute;
+use plibv4\vtc\VTCColor;
 /**
  * Simple Profiler.
  */
-final class Profiler implements \TerminalTableModel, \TerminalTableLayout {
+final class Profiler implements TerminalTableModel, TerminalTableLayout {
 	const START_TIMER = 1;
 	const END_TIMER = 2;
 	const ENTRY = 0;
@@ -101,7 +107,7 @@ final class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 	
 	public static function printTimers(): void {
 		$timer = new Profiler();
-		$table = new \TerminalTable($timer);
+		$table = new TerminalTable($timer);
 		$table->printTable();
 	}
 
@@ -124,18 +130,18 @@ final class Profiler implements \TerminalTableModel, \TerminalTableLayout {
 	}
 
 	#[\Override]
-	public function getCellBack(int $col, int $row): int {
-		return 0;
+	public function getCellBack(int $col, int $row): VTCColor {
+		return VTCColor::NONE;
 	}
 
 	#[\Override]
-	public function getCellFore(int $col, int $row): int {
-		return 0;
+	public function getCellFore(int $col, int $row): VTCColor {
+		return VTCColor::NONE;
 	}
 
 	#[\Override]
-	public function getCellJustify(int $col, int $row): int {
-		return 0;
+	public function getCellJustify(int $col, int $row): TerminalTableJustify {
+		return TerminalTableJustify::LEFT;
 	}
 
 	#[\Override]
